@@ -157,7 +157,13 @@ function App() {
             <ul>
               {jobs?.map((j) => (
                 <li key={j.id}>
-                  #{j.id} {j.status} target={j.target} plugin={j.plugin_id ?? "-"}
+                  <div className="row">
+                    <span>#{j.id}</span>
+                    <span className={`pill pill-${j.status}`}>{j.status}</span>
+                  </div>
+                  <div>target={j.target}</div>
+                  <div>plugin={j.plugin_id ?? "-"}</div>
+                  {j.result?.elapsed_sec && <div>elapsed={j.result.elapsed_sec}s</div>}
                 </li>
               )) || "None"}
             </ul>
@@ -171,7 +177,11 @@ function App() {
             <ul>
               {events?.map((e) => (
                 <li key={e.id}>
-                  {e.event_type} job={e.job_id ?? "-"} payload={JSON.stringify(e.payload)}
+                  <div className="row">
+                    <span>{e.event_type}</span>
+                    <span className="meta">job={e.job_id ?? "-"}</span>
+                  </div>
+                  <div className="mono small">{JSON.stringify(e.payload)}</div>
                 </li>
               )) || "None"}
             </ul>
