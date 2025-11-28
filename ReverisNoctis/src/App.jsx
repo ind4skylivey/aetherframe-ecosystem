@@ -224,14 +224,17 @@ function App() {
           {loadEvents ? (
             "Loading…"
           ) : (
-            <ul>
+            <ul className="events">
               {events?.map((e) => (
                 <li key={e.id}>
                   <div className="row">
                     <span>{e.event_type}</span>
                     <span className="meta">job={e.job_id ?? "-"}</span>
                   </div>
-                  <div className="mono small">{JSON.stringify(e.payload)}</div>
+                  <div className="mono small payload">
+                    {JSON.stringify(e.payload)?.slice(0, 180)}
+                    {JSON.stringify(e.payload)?.length > 180 ? " …" : ""}
+                  </div>
                 </li>
               )) || "None"}
             </ul>

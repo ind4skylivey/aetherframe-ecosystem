@@ -160,3 +160,13 @@ button:not(:disabled):hover {
   color: #475569;
   font-size: 13px;
 }
+
+.events {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.payload {
+  word-break: break-word;
+  white-space: pre-wrap;
+}
