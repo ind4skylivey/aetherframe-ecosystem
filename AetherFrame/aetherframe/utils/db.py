@@ -11,7 +11,7 @@ from .config import get_settings
 def _build_db_url() -> str:
     s = get_settings()
     return (
-        f"postgresql+psycopg2://{s.postgres_user}:{s.postgres_password}"
+        f"postgresql+psycopg://{s.postgres_user}:{s.postgres_password}"
         f"@{s.postgres_host}:{s.postgres_port}/{s.postgres_db}"
     )
 

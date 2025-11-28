@@ -13,7 +13,7 @@ fileConfig(config.config_file_name)
 settings = get_settings()
 config.set_main_option(
     "sqlalchemy.url",
-    f"postgresql+psycopg2://{settings.postgres_user}:{settings.postgres_password}"
+    f"postgresql+psycopg://{settings.postgres_user}:{settings.postgres_password}"
     f"@{settings.postgres_host}:{settings.postgres_port}/{settings.postgres_db}",
 )
 

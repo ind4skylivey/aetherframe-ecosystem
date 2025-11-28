@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from aetherframe.utils.db import get_session
 from aetherframe.core import repository
-from aetherframe.core.schemas import JobCreate, JobRead, PluginCreate, PluginRead
+from aetherframe.core.schemas import JobCreate, JobRead, PluginCreate, PluginRead, EventCreate, EventRead
 from aetherframe.utils.config import get_settings
 from aetherframe.core.celery_app import celery_app
 from aetherframe.core.models import Base, Job
@@ -66,3 +66,13 @@ def get_job(job_id: int, db: Session = Depends(get_session)):
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     return job
+
+
+@app.post("/events", response_model=EventRead)
+def create_event(payload: EventCreate, db: Session = Depends(get_session)):
+    return repository.create_event(db, payload.event_type, payload.payload, payload.job_id)
+
+
+@app.get("/events", response_model=list[EventRead])
+def list_events(db: Session = Depends(get_session)):
+    return repository.list_events(db)

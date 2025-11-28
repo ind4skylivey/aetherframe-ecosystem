@@ -3,7 +3,7 @@
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from .models import Job, JobStatus, Plugin
+from .models import Job, JobStatus, Plugin, Event
 
 
 def create_plugin(db: Session, name: str, version: str, description: str | None) -> Plugin:
@@ -44,3 +44,15 @@ def update_job_status(db: Session, job_id: int, status: JobStatus, result=None) 
     db.commit()
     db.refresh(job)
     return job
+
+
+def create_event(db: Session, event_type: str, payload, job_id: Optional[int]) -> Event:
+    ev = Event(event_type=event_type, payload=payload, job_id=job_id)
+    db.add(ev)
+    db.commit()
+    db.refresh(ev)
+    return ev
+
+
+def list_events(db: Session) -> List[Event]:
+    return db.query(Event).order_by(Event.created_at.desc()).all()

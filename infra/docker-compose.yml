@@ -16,6 +16,7 @@ services:
       context: ../AetherFrame
       network: host
     network_mode: host
+    user: "65532:65532"
     command: celery -A aetherframe.core.celery_app.celery_app worker --loglevel=info
     env_file:
       - ../.env

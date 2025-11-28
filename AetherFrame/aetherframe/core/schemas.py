@@ -36,3 +36,20 @@ class JobRead(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class EventCreate(BaseModel):
+    event_type: str
+    payload: Dict[str, Any]
+    job_id: Optional[int] = None
+
+
+class EventRead(BaseModel):
+    id: int
+    event_type: str
+    payload: Dict[str, Any]
+    created_at: datetime
+    job_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True

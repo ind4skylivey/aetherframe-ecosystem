@@ -39,3 +39,14 @@ class Job(Base):
 
     plugin_id = Column(Integer, ForeignKey("plugins.id"), nullable=True)
     plugin = relationship("Plugin", back_populates="jobs")
+
+
+class Event(Base):
+    __tablename__ = "events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_type = Column(String(64), nullable=False)
+    payload = Column(JSON, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    job_id = Column(Integer, ForeignKey("jobs.id"), nullable=True)
+    job = relationship("Job")
