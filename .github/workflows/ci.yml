@@ -37,4 +37,8 @@ jobs:
       - name: Install CLI deps
         run: pip install --no-cache-dir -r requirements.txt
       - name: Smoke import
-        run: python - <<'PY'\nimport cli.main\nprint('cli import ok')\nPY
+        run: |
+          python - <<'PY'
+          import cli.main
+          print("cli import ok")
+          PY
