@@ -1,0 +1,11 @@
+{
+  "name": "reveris-noctis",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "echo 'stub webui build'",
+    "start": "echo 'run webui placeholder' && tail -f /dev/null"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
