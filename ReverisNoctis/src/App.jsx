@@ -25,7 +25,7 @@ function useFetch(path, deps = []) {
 }
 
 function App() {
-  const { data: status, loading: loadStatus } = useFetch("/status", []);
+  const { data: status, loading: loadStatus, refetch: refetchStatus } = useFetch("/status", []);
   const { data: plugins, loading: loadPlugins, refetch: refetchPlugins } = useFetch("/plugins", [status]);
   const { data: jobs, loading: loadJobs, refetch: refetchJobs } = useFetch("/jobs", [status]);
   const { data: events, loading: loadEvents, refetch: refetchEvents } = useFetch("/events", [status]);
@@ -49,6 +49,7 @@ function App() {
     setPluginForm({ name: "", version: "0.1.0", description: "" });
     refetchPlugins();
     setBusy(false);
+    refetchStatus();
   };
 
   const submitJob = async (e) => {
@@ -67,6 +68,7 @@ function App() {
     // allow worker to emit events
     setTimeout(() => {
       refetchEvents();
+      refetchStatus();
     }, 1000);
     setBusy(false);
   };
@@ -80,7 +82,43 @@ function App() {
 
       <section className="status">
         <h2>Status</h2>
-        {loadStatus ? <span>Loading…</span> : <pre>{JSON.stringify(status, null, 2)}</pre>}
+        {loadStatus ? (
+          <span>Loading…</span>
+        ) : (
+          <div className="grid">
+            <div className="card">
+              <div className="row">
+                <strong>Celery</strong>
+                <span className={`pill ${status?.celery === "up" ? "pill-completed" : "pill-failed"}`}>
+                  {status?.celery}
+                </span>
+              </div>
+              <div className="meta">Env: {status?.env}</div>
+            </div>
+            <div className="card">
+              <h4>Counts</h4>
+              <ul>
+                <li>Jobs: {status?.metrics?.jobs_total ?? 0}</li>
+                <li>Plugins: {status?.metrics?.plugins_total ?? 0}</li>
+                <li>Events: {status?.metrics?.events_total ?? 0}</li>
+              </ul>
+            </div>
+            <div className="card">
+              <h4>Jobs by status</h4>
+              <ul>
+                {status?.metrics?.jobs_by_status &&
+                  Object.entries(status.metrics.jobs_by_status).map(([k, v]) => (
+                    <li key={k}>
+                      {k}: {v}
+                    </li>
+                  ))}
+              </ul>
+              <div className="meta">
+                Avg elapsed: {status?.metrics?.avg_elapsed_sec !== null ? `${status?.metrics?.avg_elapsed_sec}s` : "n/a"}
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="grid">

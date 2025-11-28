@@ -111,6 +111,21 @@ button:not(:disabled):hover {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+.pill.pill-failed,
+.pill.pill-completed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pill-completed::before {
+  content: "●";
+  color: #16a34a;
+}
+.pill-failed::before {
+  content: "●";
+  color: #e11d48;
+}
 .pill-pending {
   background: #fff7ed;
   color: #c2410c;

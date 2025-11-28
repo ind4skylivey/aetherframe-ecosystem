@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
+from statistics import mean
 
 from aetherframe.utils.db import get_session
 from aetherframe.core import repository
 from aetherframe.core.schemas import JobCreate, JobRead, PluginCreate, PluginRead, EventCreate, EventRead
 from aetherframe.utils.config import get_settings
 from aetherframe.core.celery_app import celery_app
-from aetherframe.core.models import Base, Job
+from aetherframe.core.models import Base, Job, Plugin, Event
 from aetherframe.utils.db import get_engine
 
 settings = get_settings()
@@ -24,16 +25,40 @@ def health_check() -> dict:
 
 
 @app.get("/status")
-def status() -> dict:
-    """Report readiness and broker connectivity."""
+def status(db: Session = Depends(get_session)) -> dict:
+    """Report readiness, broker connectivity, and aggregate metrics."""
     try:
         pong = celery_app.control.ping(timeout=1.0)
     except Exception:
         pong = None
+
+    jobs = db.query(Job).all()
+    plugins_count = db.query(Plugin).count()
+    events_count = db.query(Event).count()
+
+    status_counts = {
+        "pending": 0,
+        "running": 0,
+        "completed": 0,
+        "failed": 0,
+    }
+    elapsed = []
+    for j in jobs:
+        status_counts[j.status.value] = status_counts.get(j.status.value, 0) + 1
+        if isinstance(j.result, dict) and j.result.get("elapsed_sec") is not None:
+            elapsed.append(float(j.result["elapsed_sec"]))
+
     return {
         "service": "aetherframe",
         "env": settings.environment,
         "celery": "up" if pong else "down",
+        "metrics": {
+            "jobs_total": len(jobs),
+            "plugins_total": plugins_count,
+            "events_total": events_count,
+            "jobs_by_status": status_counts,
+            "avg_elapsed_sec": round(mean(elapsed), 4) if elapsed else None,
+        },
     }
 
 
