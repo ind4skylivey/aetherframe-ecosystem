@@ -133,3 +133,18 @@ def metrics(db: Session = Depends(get_session)):
     for k, v in status_counts.items():
         lines.append(f'aether_jobs_status_total{{status="{k}"}} {v}')
     return "\n".join(lines) + "\n"
+
+
+@app.get("/")
+def root() -> dict:
+    """Friendly landing instead of 404."""
+    return {
+        "service": "aetherframe",
+        "docs": "/docs",
+        "health": "/health",
+        "status": "/status",
+        "metrics": "/metrics",
+        "plugins": "/plugins",
+        "jobs": "/jobs",
+        "events": "/events",
+    }
