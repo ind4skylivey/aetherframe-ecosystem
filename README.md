@@ -13,4 +13,9 @@ Monorepo scaffold for AetherFrame (backend), Reveris Noctis (UI/CLI), and LainTr
 - `LainTrace/` — Frida-based tracer
 - `infra/` — shared compose, scripts, CI/CD
 
+## Host warnings / tuning
+- Redis may log `vm.overcommit_memory=1` warning. Optional: `sudo sysctl -w vm.overcommit_memory=1` (persist with a file in `/etc/sysctl.d/`).
+- Compose can warn about buildx; builds still succeed. To silence: install Docker Buildx (`docker buildx install`) or set `COMPOSE_DOCKER_CLI_BUILD=0` during builds.
+- Run compose commands with `--env-file .env` to avoid env fallback warnings.
+
 Follow staged prompts in `prompts/` for full build-out.
