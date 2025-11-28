@@ -56,6 +56,15 @@ def add_job(target: str, plugin_id: int = typer.Option(None, "--plugin-id")):
 
 
 @app.command()
+def events():
+    """List recent events."""
+    r = requests.get(_url("/events"), timeout=5)
+    r.raise_for_status()
+    for e in r.json():
+        typer.echo(f"{e['id']}: {e['event_type']} job_id={e.get('job_id')} payload={e['payload']}")
+
+
+@app.command()
 def ping():
     """Basic connectivity check."""
     typer.echo("reveris-ok")
