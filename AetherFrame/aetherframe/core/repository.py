@@ -23,7 +23,7 @@ def get_plugin(db: Session, plugin_id: int) -> Optional[Plugin]:
 
 
 def create_job(db: Session, target: str, plugin_id: Optional[int]) -> Job:
-    job = Job(target=target, plugin_id=plugin_id)
+    job = Job(target=target.strip(), plugin_id=plugin_id)
     db.add(job)
     db.commit()
     db.refresh(job)

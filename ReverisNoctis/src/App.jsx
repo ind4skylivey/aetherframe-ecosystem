@@ -6,6 +6,7 @@ function useFetch(path, deps = []) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [tick, setTick] = useState(0);
 
   const refetch = () => {
     setLoading(true);
@@ -20,6 +21,17 @@ function useFetch(path, deps = []) {
     refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
+
+  // simple auto-refresh every 10s
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 10000);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    if (tick > 0) refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick]);
 
   return { data, loading, error, refetch };
 }

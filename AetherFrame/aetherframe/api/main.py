@@ -78,7 +78,7 @@ def status(db: Session = Depends(get_session)) -> dict:
 
 @app.post("/plugins", response_model=PluginRead)
 def create_plugin(payload: PluginCreate, db: Session = Depends(get_session)):
-    return repository.create_plugin(db, payload.name, payload.version, payload.description)
+    return repository.create_plugin(db, payload.name.strip(), payload.version.strip(), payload.description.strip() if payload.description else None)
 
 
 @app.get("/plugins", response_model=list[PluginRead])
