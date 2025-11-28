@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from statistics import mean
+from fastapi.middleware.cors import CORSMiddleware
 
 from aetherframe.utils.db import get_session
 from aetherframe.core import repository
@@ -16,6 +17,19 @@ app = FastAPI(title="AetherFrame API", version="0.1.0")
 # Ensure tables exist on startup (lightweight for dev)
 engine = get_engine()
 Base.metadata.create_all(bind=engine)
+
+# CORS
+allowed_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
@@ -101,3 +115,21 @@ def create_event(payload: EventCreate, db: Session = Depends(get_session)):
 @app.get("/events", response_model=list[EventRead])
 def list_events(db: Session = Depends(get_session)):
     return repository.list_events(db)
+
+
+@app.get("/metrics")
+def metrics(db: Session = Depends(get_session)):
+    """Prometheus-style minimal metrics."""
+    jobs = db.query(Job).all()
+    status_counts = {"pending": 0, "running": 0, "completed": 0, "failed": 0}
+    for j in jobs:
+        status_counts[j.status.value] = status_counts.get(j.status.value, 0) + 1
+
+    lines = [
+        "# HELP aether_jobs_total Total jobs",
+        "# TYPE aether_jobs_total gauge",
+        f"aether_jobs_total {len(jobs)}",
+    ]
+    for k, v in status_counts.items():
+        lines.append(f'aether_jobs_status_total{{status="{k}"}} {v}')
+    return "\n".join(lines) + "\n"

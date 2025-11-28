@@ -20,8 +20,8 @@ jobs:
         run: pip install --no-cache-dir -r requirements.txt
       - name: Lint syntax
         run: python -m compileall aetherframe
-      - name: Run unit placeholders
-        run: echo "No tests yet"
+      - name: Run tests
+        run: pytest
 
   cli:
     runs-on: ubuntu-latest
@@ -42,3 +42,7 @@ jobs:
           import cli.main
           print("cli import ok")
           PY
+      - name: Build web UI
+        run: |
+          npm ci
+          npm run build

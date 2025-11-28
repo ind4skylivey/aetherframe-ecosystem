@@ -2,14 +2,14 @@
 
 from datetime import datetime
 from typing import Optional, Any, Dict
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from .models import JobStatus
 
 
 class PluginCreate(BaseModel):
-    name: str
-    version: str = "0.1.0"
-    description: Optional[str] = None
+    name: str = Field(min_length=1, max_length=128)
+    version: str = Field(default="0.1.0", max_length=32)
+    description: Optional[str] = Field(default=None, max_length=512)
 
 
 class PluginRead(PluginCreate):
@@ -21,7 +21,7 @@ class PluginRead(PluginCreate):
 
 
 class JobCreate(BaseModel):
-    target: str
+    target: str = Field(min_length=1, max_length=256)
     plugin_id: Optional[int] = None
 
 
