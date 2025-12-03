@@ -440,6 +440,14 @@ docker compose logs -f aetherframe-api aetherframe-worker
 
 ---
 
+### 🛡️ Legal / Ownership
+- Copyright (c) 2025 ind4skylivey. All rights reserved.
+- EULA applies: see `EULA.md`. No redistribution, resale, SaaS hosting, or derivatives without written consent.
+- Trademarks: “AetherFrame”, “Reveris Noctis”, “LainTrace” and associated logos require permission.
+- NOTICE file included for clarity; violations may result in takedowns.
+
+---
+
 ### 🛰️ Future Integrations
 - GHCR images
 - OTEL traces
