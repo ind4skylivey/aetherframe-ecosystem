@@ -8,7 +8,7 @@
 -->
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ind4skylivey/aetherframe-ecosystem/main/assets/hero-neon.gif" alt="AetherFrame Neon Hero" width="960">
+  <img src="assets/banner-ecosystem.png" alt="AetherFrame Neon Hero" width="960">
 </p>
 
 <h1 align="center">⚡ AetherFrame Ecosystem ⚡</h1>
