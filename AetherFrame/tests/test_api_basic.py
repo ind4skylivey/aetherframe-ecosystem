@@ -6,6 +6,7 @@ if TEST_DB.exists():
     TEST_DB.unlink()
 
 os.environ.setdefault("AETHERFRAME_DB_URL", f"sqlite:///{TEST_DB}")
+os.environ.setdefault("AETHERFRAME_LICENSE_ENFORCE", "false")
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine

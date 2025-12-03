@@ -5,6 +5,7 @@
 - Additional API tests covering validation, metrics, CORS preflight, and event flow.
 - Configurable CORS origins via `AETHERFRAME_CORS_ORIGINS` env var.
 - Configurable database URL via `AETHERFRAME_DB_URL`/`DB_URL` for testing.
+- License enforcement hook (ed25519 token) for API/worker via `AETHERFRAME_LICENSE_TOKEN` and `AETHERFRAME_LICENSE_ENFORCE`.
 
 ## v0.1.0-early (2025-11-28)
 ### Added

@@ -36,6 +36,8 @@ class Settings(BaseSettings):
         env="AETHERFRAME_CORS_ORIGINS",
     )
 
+    license_enforce: bool = Field(default=True, env="AETHERFRAME_LICENSE_ENFORCE")
+
 
 @lru_cache()
 def get_settings() -> Settings:

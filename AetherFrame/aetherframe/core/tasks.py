@@ -6,6 +6,7 @@ from aetherframe.core.celery_app import celery_app
 from aetherframe.core import repository
 from aetherframe.utils.db import get_session_factory
 from aetherframe.core.models import JobStatus
+from aetherframe.utils.license import enforce_or_fail_worker
 import time
 
 SessionLocal = get_session_factory()
@@ -14,6 +15,7 @@ SessionLocal = get_session_factory()
 @celery_app.task(name="aetherframe.process_job")
 def process_job(job_id: int, target: str) -> Dict[str, Any]:
     """Mock job processor; updates status and returns a placeholder result."""
+    enforce_or_fail_worker()
     db = SessionLocal()
     try:
         repository.update_job_status(db, job_id, JobStatus.running)

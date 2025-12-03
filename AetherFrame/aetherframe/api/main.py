@@ -11,6 +11,7 @@ from aetherframe.core.celery_app import celery_app
 from aetherframe.core.models import Base, Job, Plugin, Event
 from aetherframe.utils.db import get_engine
 from fastapi.responses import PlainTextResponse
+from aetherframe.utils.license import enforce_or_raise
 
 settings = get_settings()
 app = FastAPI(title="AetherFrame API", version="0.1.0")
@@ -75,6 +76,7 @@ def status(db: Session = Depends(get_session)) -> dict:
 
 @app.post("/plugins", response_model=PluginRead)
 def create_plugin(payload: PluginCreate, db: Session = Depends(get_session)):
+    enforce_or_raise()
     name = payload.name.strip()
     version = payload.version.strip()
     if not name or not version:
@@ -90,6 +92,7 @@ def list_plugins(db: Session = Depends(get_session)):
 
 @app.post("/jobs", response_model=JobRead)
 def create_job(payload: JobCreate, db: Session = Depends(get_session)):
+    enforce_or_raise()
     job = repository.create_job(db, payload.target, payload.plugin_id)
     # Enqueue background processing
     celery_app.send_task("aetherframe.process_job", args=[job.id, job.target])
@@ -111,6 +114,7 @@ def get_job(job_id: int, db: Session = Depends(get_session)):
 
 @app.post("/events", response_model=EventRead)
 def create_event(payload: EventCreate, db: Session = Depends(get_session)):
+    enforce_or_raise()
     return repository.create_event(db, payload.event_type, payload.payload, payload.job_id)
 
 

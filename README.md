@@ -150,6 +150,8 @@ python cli/main.py events
 - `POSTGRES_*`, `REDIS_*`, `MINIO_*` — creds/hosts/ports
 - `AETHERFRAME_API_HOST`, `AETHERFRAME_API_PORT`
 - `AETHERFRAME_WORKER_CONCURRENCY`
+- `AETHERFRAME_LICENSE_TOKEN` — base64 ed25519 signature (required when enforcement on)
+- `AETHERFRAME_LICENSE_ENFORCE` — default `true`; set `false` only for internal/dev
 
 ---
 
