@@ -1,38 +1,57 @@
 # AetherFrame Ecosystem
 
-Monorepo scaffold for AetherFrame (backend), Reveris Noctis (UI/CLI), and LainTrace (tracing).
+Offensive-security friendly orchestration stack: FastAPI + Celery + Postgres + Redis + MinIO backend (AetherFrame), Vite/React UI + Typer CLI (Reveris Noctis), and tracing/agent layer (LainTrace). Built for red team automation, pluginized job processing, and quick observability.
 
-## Quickstart (staged flow)
-- Copy `.env.example` to `.env` and adjust secrets.
-- Build and start infra: `docker compose -f infra/docker-compose.yml --env-file .env up -d`.
-- Services: FastAPI backend at 8000, Redis 6379, Postgres 5432, MinIO 9000/9001, Reveris CLI talks to API.
+## Why this repo
+- Single monorepo keeps API, UI/CLI, and tracer aligned for fast iteration.
+- Docker Compose out-of-the-box: stand up API, worker, Redis, Postgres, MinIO, UI.
+- Batteries included: Prometheus-style metrics, CORS, input validation, Alembic migrations, non-root worker.
 
-> If your shell aliases docker->podman, export `DOCKER_HOST=unix:///var/run/docker.sock` before running compose.
+## Quickstart
+1) Copy `.env.example` to `.env` and set secrets.
+2) Use Docker (if your shell aliases `docker` to podman: `export DOCKER_HOST=unix:///var/run/docker.sock`).
+3) Bring everything up:
+```
+docker compose -f infra/docker-compose.yml --env-file .env up -d
+```
+4) Visit: API `http://localhost:8000`, UI `http://localhost:3000`, MinIO console `http://localhost:9001`.
 
-## Structure
-- `AetherFrame/` — FastAPI + Celery orchestration layer
-- `ReverisNoctis/` — React UI, Typer CLI, reporting
-- `LainTrace/` — Frida-based tracer
-- `infra/` — shared compose, scripts, CI/CD
+## Services (monorepo layout)
+- `AetherFrame/` — FastAPI API, Celery worker, SQLAlchemy + Alembic, Prometheus `/metrics`.
+- `ReverisNoctis/` — Vite/React UI, Typer CLI for plugins/jobs/events.
+- `LainTrace/` — tracer/agent component (Frida-oriented).
+- `infra/` — shared compose definitions.
+- `prompts/` — bootstrap guides and roadmap.
 
 ## Configuration
-- CORS origins: set `AETHERFRAME_CORS_ORIGINS` (comma-separated) to allow extra frontends. Defaults to `http://localhost:3000,http://127.0.0.1:3000`.
-- API host/port, Postgres/Redis/MinIO credentials, and worker concurrency are configurable via `.env` (see `.env.example`).
-- To use an alternate database (e.g., tests), set `DB_URL`/`AETHERFRAME_DB_URL` (SQLite URL works).
+- CORS: `AETHERFRAME_CORS_ORIGINS` (comma-separated, default `http://localhost:3000,http://127.0.0.1:3000`).
+- DB: override with `DB_URL`/`AETHERFRAME_DB_URL` (SQLite URLs work for tests).
+- API/worker/minio/postgres/redis hosts, ports, and creds from `.env` (see `.env.example`).
+- Worker concurrency: `AETHERFRAME_WORKER_CONCURRENCY`.
 
-## Host warnings / tuning
-- Redis may log `vm.overcommit_memory=1` warning. Optional: `sudo sysctl -w vm.overcommit_memory=1` (persist with a file in `/etc/sysctl.d/`).
-- Compose can warn about buildx; builds still succeed. To silence: install Docker Buildx (`docker buildx install`) or set `COMPOSE_DOCKER_CLI_BUILD=0` during builds.
-- Run compose commands with `--env-file .env` to avoid env fallback warnings.
-
-Follow staged prompts in `prompts/` for full build-out.
-
-### Alembic
-Run migrations inside the API container:
+## Database migrations
+Run inside the API container (ensures correct PYTHONPATH):
 ```
 docker compose -f infra/docker-compose.yml --env-file .env exec -e PYTHONPATH=/app aetherframe-api alembic upgrade head
 ```
 
-### UI & CLI
-- UI (Vite preview) at http://localhost:3000
-- CLI usage (from `ReverisNoctis`): `python cli/main.py status`, `add-plugin`, `add-job`, `events`.
+## CLI & UI
+- UI (preview): `http://localhost:3000`
+- CLI from `ReverisNoctis/`:
+```
+python cli/main.py status
+python cli/main.py add-plugin --name test --version 0.1.0
+python cli/main.py add-job --target sample.bin --plugin-id 1
+python cli/main.py events
+```
+
+## Ops notes
+- Redis may warn about `vm.overcommit_memory`; optional: `sudo sysctl -w vm.overcommit_memory=1`.
+- Buildx warnings are safe; to silence, install buildx or set `COMPOSE_DOCKER_CLI_BUILD=0`.
+- Always pass `--env-file .env` to compose to avoid env fallback noise.
+
+## Roadmap snapshot
+- More API tests (validation/metrics), configurable CORS, DB URL override ✅
+- Hardening: rate limits, payload length checks, metrics persistence.
+- CI guardrails: migrations up-to-date check, backend + UI builds.
+- Pre-release tags tracked in `CHANGELOG.md`; progress tracked in `prompts/aetherframe_roadmap.md`.
