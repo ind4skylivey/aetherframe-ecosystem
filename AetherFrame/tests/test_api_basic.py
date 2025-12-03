@@ -7,13 +7,13 @@ if TEST_DB.exists():
 
 os.environ.setdefault("AETHERFRAME_DB_URL", f"sqlite:///{TEST_DB}")
 os.environ.setdefault("AETHERFRAME_LICENSE_ENFORCE", "false")
+os.environ.setdefault("ENVIRONMENT", "test")
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from aetherframe.utils.config import get_settings
-
 get_settings.cache_clear()
 
 from aetherframe.api.main import app

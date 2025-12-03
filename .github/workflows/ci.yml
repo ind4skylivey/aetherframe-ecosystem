@@ -10,6 +10,9 @@ jobs:
     defaults:
       run:
         working-directory: AetherFrame
+    env:
+      ENVIRONMENT: test
+      AETHERFRAME_LICENSE_ENFORCE: "false"
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
