@@ -10,6 +10,8 @@ from .config import get_settings
 
 def _build_db_url() -> str:
     s = get_settings()
+    if s.db_url:
+        return s.db_url
     return (
         f"postgresql+psycopg://{s.postgres_user}:{s.postgres_password}"
         f"@{s.postgres_host}:{s.postgres_port}/{s.postgres_db}"

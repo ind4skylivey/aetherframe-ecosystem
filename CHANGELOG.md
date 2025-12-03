@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+### Added
+- Additional API tests covering validation, metrics, CORS preflight, and event flow.
+- Configurable CORS origins via `AETHERFRAME_CORS_ORIGINS` env var.
+- Configurable database URL via `AETHERFRAME_DB_URL`/`DB_URL` for testing.
+
 ## v0.1.0-early (2025-11-28)
 ### Added
 - FastAPI backend with jobs/plugins CRUD, Celery tasks, events, metrics (`/status`, `/metrics`).

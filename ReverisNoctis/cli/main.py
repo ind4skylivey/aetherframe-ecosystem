@@ -1,6 +1,7 @@
 import os
 import typer
 import requests
+import time
 
 API_BASE = os.getenv("REVERIS_API_BASE", "http://localhost:8000")
 
@@ -52,7 +53,17 @@ def add_job(target: str, plugin_id: int = typer.Option(None, "--plugin-id")):
     payload = {"target": target, "plugin_id": plugin_id}
     r = requests.post(_url("/jobs"), json=payload, timeout=5)
     r.raise_for_status()
-    typer.echo(r.json())
+    job = r.json()
+    typer.echo(job)
+    # lightweight wait to fetch events after enqueue
+    for _ in range(3):
+        time.sleep(0.8)
+        ev = requests.get(_url("/events"), timeout=5).json()
+        if ev:
+            typer.echo("Recent events:")
+            for e in ev[:5]:
+                typer.echo(f"{e['id']}: {e['event_type']} job_id={e.get('job_id')} payload={e['payload']}")
+            break
 
 
 @app.command()

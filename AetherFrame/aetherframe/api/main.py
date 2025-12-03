@@ -10,6 +10,7 @@ from aetherframe.utils.config import get_settings
 from aetherframe.core.celery_app import celery_app
 from aetherframe.core.models import Base, Job, Plugin, Event
 from aetherframe.utils.db import get_engine
+from fastapi.responses import PlainTextResponse
 
 settings = get_settings()
 app = FastAPI(title="AetherFrame API", version="0.1.0")
@@ -19,13 +20,9 @@ engine = get_engine()
 Base.metadata.create_all(bind=engine)
 
 # CORS
-allowed_origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -78,7 +75,12 @@ def status(db: Session = Depends(get_session)) -> dict:
 
 @app.post("/plugins", response_model=PluginRead)
 def create_plugin(payload: PluginCreate, db: Session = Depends(get_session)):
-    return repository.create_plugin(db, payload.name.strip(), payload.version.strip(), payload.description.strip() if payload.description else None)
+    name = payload.name.strip()
+    version = payload.version.strip()
+    if not name or not version:
+        raise HTTPException(status_code=422, detail="name and version must not be empty")
+    description = payload.description.strip() if payload.description else None
+    return repository.create_plugin(db, name, version, description)
 
 
 @app.get("/plugins", response_model=list[PluginRead])
@@ -117,7 +119,7 @@ def list_events(db: Session = Depends(get_session)):
     return repository.list_events(db)
 
 
-@app.get("/metrics")
+@app.get("/metrics", response_class=PlainTextResponse)
 def metrics(db: Session = Depends(get_session)):
     """Prometheus-style minimal metrics."""
     jobs = db.query(Job).all()

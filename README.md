@@ -15,6 +15,11 @@ Monorepo scaffold for AetherFrame (backend), Reveris Noctis (UI/CLI), and LainTr
 - `LainTrace/` — Frida-based tracer
 - `infra/` — shared compose, scripts, CI/CD
 
+## Configuration
+- CORS origins: set `AETHERFRAME_CORS_ORIGINS` (comma-separated) to allow extra frontends. Defaults to `http://localhost:3000,http://127.0.0.1:3000`.
+- API host/port, Postgres/Redis/MinIO credentials, and worker concurrency are configurable via `.env` (see `.env.example`).
+- To use an alternate database (e.g., tests), set `DB_URL`/`AETHERFRAME_DB_URL` (SQLite URL works).
+
 ## Host warnings / tuning
 - Redis may log `vm.overcommit_memory=1` warning. Optional: `sudo sysctl -w vm.overcommit_memory=1` (persist with a file in `/etc/sysctl.d/`).
 - Compose can warn about buildx; builds still succeed. To silence: install Docker Buildx (`docker buildx install`) or set `COMPOSE_DOCKER_CLI_BUILD=0` during builds.

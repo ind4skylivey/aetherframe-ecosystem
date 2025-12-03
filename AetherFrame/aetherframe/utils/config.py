@@ -1,11 +1,13 @@
 """Application configuration and settings loader."""
 
 from functools import lru_cache
-from pydantic_settings import BaseSettings
-from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, AliasChoices
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+
     environment: str = Field(default="development", env="ENVIRONMENT")
 
     postgres_host: str = Field(default="localhost", env="POSTGRES_HOST")
@@ -23,14 +25,16 @@ class Settings(BaseSettings):
     minio_use_ssl: bool = Field(default=False, env="MINIO_USE_SSL")
     minio_bucket: str = Field(default="aether-artifacts", env="MINIO_BUCKET")
 
+    db_url: str | None = Field(default=None, validation_alias=AliasChoices("AETHERFRAME_DB_URL", "DB_URL"))
     api_host: str = Field(default="0.0.0.0", env="AETHERFRAME_API_HOST")
     api_port: int = Field(default=8000, env="AETHERFRAME_API_PORT")
 
     worker_concurrency: int = Field(default=2, env="AETHERFRAME_WORKER_CONCURRENCY")
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    cors_origins: list[str] = Field(
+        default_factory=lambda: ["http://localhost:3000", "http://127.0.0.1:3000"],
+        env="AETHERFRAME_CORS_ORIGINS",
+    )
 
 
 @lru_cache()
