@@ -1,5 +1,11 @@
 # AetherFrame Ecosystem
 
+[![CI](https://github.com/ind4skylivey/aetherframe-ecosystem/actions/workflows/ci.yml/badge.svg)](https://github.com/ind4skylivey/aetherframe-ecosystem/actions/workflows/ci.yml)
+[![Backend](https://img.shields.io/badge/FastAPI-0.115-brightgreen)](https://fastapi.tiangolo.com/)
+[![Worker](https://img.shields.io/badge/Celery-5.3-65c28e)](https://docs.celeryq.dev/)
+[![UI](https://img.shields.io/badge/React-18-61dafb)](https://react.dev/)
+[![Runtime](https://img.shields.io/badge/Docker%20Compose-ready-0db7ed)](https://docs.docker.com/compose/)
+
 Offensive-security friendly orchestration stack: FastAPI + Celery + Postgres + Redis + MinIO backend (AetherFrame), Vite/React UI + Typer CLI (Reveris Noctis), and tracing/agent layer (LainTrace). Built for red team automation, pluginized job processing, and quick observability.
 
 ## Why this repo
@@ -22,6 +28,12 @@ docker compose -f infra/docker-compose.yml --env-file .env up -d
 - `LainTrace/` — tracer/agent component (Frida-oriented).
 - `infra/` — shared compose definitions.
 - `prompts/` — bootstrap guides and roadmap.
+
+### Highlights
+- Plugin-first jobs with Celery; events emitted for lifecycle.
+- Prometheus-style `/metrics` plus `/status` aggregates.
+- Auto-refreshing UI dashboard and CLI with event tail.
+- Non-root worker, CORS, input trimming/validation by default.
 
 ## Configuration
 - CORS: `AETHERFRAME_CORS_ORIGINS` (comma-separated, default `http://localhost:3000,http://127.0.0.1:3000`).
