@@ -39,7 +39,7 @@
 - 🧩 Extensible Typer CLI + Vite/React UI for ops, plugins, and events
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ind4skylivey/aetherframe-ecosystem/main/assets/demo-jobs.gif" width="880" alt="Jobs demo GIF">
+  <img src="assets/reveris-demo.gif" width="880" alt="Reveris Noctis live UI demo">
 </p>
 
 ---
@@ -87,6 +87,18 @@ flowchart LR
     Worker-.metrics.->API
     API-.prometheus.->Monitor[(Prometheus/Grafana)]
 ```
+
+### What it does (plain English)
+- Orchestrates red-team plugins/jobs through a FastAPI core and Celery worker, backed by Redis + Postgres + MinIO for broker/state/artifacts.
+- Gives operators a thin React UI and Typer CLI (Reveris Noctis) to submit jobs, watch events, and see live counts without extra tooling.
+- Accepts telemetry/events from Frida-based agents (LainTrace) so runtime traces land in the same pipeline as jobs.
+- Exposes `/status` and `/metrics` natively; Prometheus/Grafana are optional add-ons, not required to run the stack.
+
+### What makes it different
+- Built **for offensive workflows first** (plugins/jobs/events) instead of generic app monitoring.
+- **Self-contained, single compose**: everything needed for demos/tests ships here (no default Prometheus dependency).
+- **Artifact-aware**: MinIO is wired for storing loot/output alongside job state.
+- **Live operator loop**: UI auto-refreshes counts/events every 10s; CLI shows recent events after submissions for instant feedback.
 
 ---
 
