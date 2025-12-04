@@ -4,6 +4,7 @@ from statistics import mean
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+from fastapi.openapi.docs import get_swagger_ui_html
 
 from aetherframe.utils.db import get_session
 from aetherframe.core import repository
@@ -21,12 +22,8 @@ static_dir = Path(__file__).parent / "static"
 app = FastAPI(
     title="AetherFrame API",
     version="0.1.0",
-    docs_url="/docs",
-    swagger_ui_parameters={
-        "defaultModelsExpandDepth": -1,
-        "syntaxHighlight.theme": "obsidian",
-        "customCssUrl": "/static/swagger-theme.css",
-    },
+    docs_url=None,  # we'll serve custom docs to force CSS
+    swagger_ui_parameters={"defaultModelsExpandDepth": -1},
 )
 
 # Ensure tables exist on startup (lightweight for dev)
@@ -36,6 +33,20 @@ Base.metadata.create_all(bind=engine)
 # Static for Swagger theme
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+
+@app.get("/docs", include_in_schema=False)
+def custom_docs():
+    return get_swagger_ui_html(
+        openapi_url=app.openapi_url,
+        title="AetherFrame API",
+        swagger_favicon_url="https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/2728.svg",
+        swagger_ui_parameters={
+            "syntaxHighlight.theme": "obsidian",
+            "customCssUrl": "/static/swagger-theme.css",
+            "defaultModelsExpandDepth": -1,
+        },
+    )
 
 # CORS
 app.add_middleware(

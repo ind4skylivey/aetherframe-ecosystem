@@ -41,6 +41,9 @@
 <p align="center">
   <img src="assets/reveris-demo.gif" width="880" alt="Reveris Noctis live UI demo">
 </p>
+<p align="center">
+  <img src="assets/aetherframe-swagger.gif" width="880" alt="AetherFrame API neon Swagger UI">
+</p>
 
 ---
 
