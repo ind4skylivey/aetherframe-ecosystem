@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from statistics import mean
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 from aetherframe.utils.db import get_session
 from aetherframe.core import repository
@@ -14,11 +16,26 @@ from fastapi.responses import PlainTextResponse
 from aetherframe.utils.license import enforce_or_raise
 
 settings = get_settings()
-app = FastAPI(title="AetherFrame API", version="0.1.0")
+
+static_dir = Path(__file__).parent / "static"
+app = FastAPI(
+    title="AetherFrame API",
+    version="0.1.0",
+    docs_url="/docs",
+    swagger_ui_parameters={
+        "defaultModelsExpandDepth": -1,
+        "syntaxHighlight.theme": "obsidian",
+        "customCssUrl": "/static/swagger-theme.css",
+    },
+)
 
 # Ensure tables exist on startup (lightweight for dev)
 engine = get_engine()
 Base.metadata.create_all(bind=engine)
+
+# Static for Swagger theme
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # CORS
 app.add_middleware(
