@@ -256,16 +256,6 @@ If shell aliases docker→podman, set `DOCKER_HOST=unix:///var/run/docker.sock` 
 
 ---
 
-## 🖼️ Gallery (screens)
-<p align="center">
-  <img src="https://raw.githubusercontent.com/ind4skylivey/aetherframe-ecosystem/main/assets/ui-jobs.png" width="880">
-</p>
-<p align="center">
-  <img src="https://raw.githubusercontent.com/ind4skylivey/aetherframe-ecosystem/main/assets/metrics.png" width="880">
-</p>
-
----
-
 ## ⚔️ Summon the Beast
 ```bash
 docker compose -f infra/docker-compose.yml --env-file .env up -d
