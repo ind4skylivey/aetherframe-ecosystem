@@ -44,6 +44,9 @@
 <p align="center">
   <img src="assets/aetherframe-swagger.gif" width="880" alt="AetherFrame API neon Swagger UI">
 </p>
+<p align="center">
+  <img src="assets/laintrace-probe.png" width="880" alt="LainTrace probe event into AetherFrame">
+</p>
 
 ---
 
